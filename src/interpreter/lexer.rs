@@ -10,19 +10,19 @@ pub enum Operator {
     Div,
 }
 
-pub enum Symbol {
+pub enum Token {
     Integer(i64),
     Op(Operator),
 }
 
-impl Display for Symbol {
+impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Symbol::Integer(i) => write!(f, "....S: Integer: {}", i),
-            Symbol::Op(Operator::Add) => write!(f, "....S: Op: +"),
-            Symbol::Op(Operator::Sub) => write!(f, "....S: Op: -"),
-            Symbol::Op(Operator::Mult) => write!(f, "....S: Op: *"),
-            Symbol::Op(Operator::Div) => write!(f, "....S: Op: /"),
+            Token::Integer(i) => write!(f, "....S: Integer: {}", i),
+            Token::Op(Operator::Add) => write!(f, "....S: Op: +"),
+            Token::Op(Operator::Sub) => write!(f, "....S: Op: -"),
+            Token::Op(Operator::Mult) => write!(f, "....S: Op: *"),
+            Token::Op(Operator::Div) => write!(f, "....S: Op: /"),
         }
     }
 }
@@ -55,7 +55,7 @@ impl<'a> Lexer<'a> {
 }
 
 impl Iterator for Lexer<'_> {
-    type Item = Symbol;
+    type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
         // We use the peek method to be able to read integer. So
@@ -65,23 +65,23 @@ impl Iterator for Lexer<'_> {
             match c {
                 '+' => {
                     self.iter.next();
-                    return Some(Symbol::Op(Operator::Add));
+                    return Some(Token::Op(Operator::Add));
                 }
                 '-' => {
                     self.iter.next();
-                    return Some(Symbol::Op(Operator::Sub));
+                    return Some(Token::Op(Operator::Sub));
                 }
                 '*' => {
                     self.iter.next();
-                    return Some(Symbol::Op(Operator::Mult));
+                    return Some(Token::Op(Operator::Mult));
                 }
                 '/' => {
                     self.iter.next();
-                    return Some(Symbol::Op(Operator::Div));
+                    return Some(Token::Op(Operator::Div));
                 }
                 '0'..='9' => {
                     // In this case character will be consumed by read_integer
-                    return Some(Symbol::Integer(Self::read_integer(&mut self.iter)));
+                    return Some(Token::Integer(Self::read_integer(&mut self.iter)));
                 }
                 c if c.is_whitespace() => {
                     // Just skip it

@@ -1,4 +1,7 @@
-use pratt_calculator::interpreter::lexer::Lexer;
+use pratt_calculator::interpreter::{
+    lexer::{Lexer, Token},
+    parser::Parser,
+};
 use std::io::Write;
 
 fn main() {
@@ -16,9 +19,17 @@ fn main() {
         match stdin.read_line(&mut input) {
             Ok(0) => break,
             Ok(n) => {
-                println!("..parsing {} bytes", n);
-                let lex = Lexer::new(input.trim());
-                lex.for_each(|s| println!("{}", s));
+                println!("..reading {} bytes", n);
+                println!("..lexer called");
+                let tokens: Vec<Token> = Lexer::new(input.trim()).collect();
+
+                println!("..done");
+                for t in &tokens {
+                    println!("{}", t);
+                }
+
+                println!("..parser called");
+                let _parser = Parser::new(&tokens);
                 println!("..done");
             }
             Err(e) => eprintln!("failed to read line: {}", e),
