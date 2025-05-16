@@ -1,3 +1,4 @@
+use pratt_calculator::interpreter::lexer::Lexer;
 use std::io::Write;
 
 fn main() {
@@ -15,7 +16,10 @@ fn main() {
         match stdin.read_line(&mut input) {
             Ok(0) => break,
             Ok(n) => {
-                println!("..ECHO {} bytes <{}>", n, &input);
+                println!("..parsing {} bytes", n);
+                let lex = Lexer::new(input.trim());
+                lex.for_each(|s| println!("{}", s));
+                println!("..done");
             }
             Err(e) => eprintln!("failed to read line: {}", e),
         }

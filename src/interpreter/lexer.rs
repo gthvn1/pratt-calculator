@@ -1,0 +1,100 @@
+// We start with a simple calculator:
+// It accepts integer and four operators '+', '-', '/' and '*'
+
+use std::fmt::Display;
+
+pub enum Operator {
+    Add,
+    Sub,
+    Mult,
+    Div,
+}
+
+pub enum Symbol {
+    Integer(i64),
+    Op(Operator),
+}
+
+impl Display for Symbol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Symbol::Integer(i) => write!(f, "....S: Integer: {}", i),
+            Symbol::Op(Operator::Add) => write!(f, "....S: Op: +"),
+            Symbol::Op(Operator::Sub) => write!(f, "....S: Op: -"),
+            Symbol::Op(Operator::Mult) => write!(f, "....S: Op: *"),
+            Symbol::Op(Operator::Div) => write!(f, "....S: Op: /"),
+        }
+    }
+}
+
+pub struct Lexer<'a> {
+    iter: std::iter::Peekable<std::str::Chars<'a>>,
+}
+
+impl<'a> Lexer<'a> {
+    pub fn new(input: &'a str) -> Self {
+        Self {
+            iter: input.chars().peekable(),
+        }
+    }
+
+    fn read_integer(iter: &mut std::iter::Peekable<std::str::Chars<'_>>) -> i64 {
+        let mut v = String::new();
+
+        while let Some(&c) = iter.peek() {
+            if c.is_ascii_digit() {
+                let x = iter.next().unwrap();
+                v.push(x);
+            } else {
+                break;
+            }
+        }
+
+        v.parse::<i64>().unwrap()
+    }
+}
+
+impl Iterator for Lexer<'_> {
+    type Item = Symbol;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        // We use the peek method to be able to read integer. So
+        // don't forget to consume the character in each case if
+        // needed.
+        while let Some(&c) = self.iter.peek() {
+            match c {
+                '+' => {
+                    self.iter.next();
+                    return Some(Symbol::Op(Operator::Add));
+                }
+                '-' => {
+                    self.iter.next();
+                    return Some(Symbol::Op(Operator::Sub));
+                }
+                '*' => {
+                    self.iter.next();
+                    return Some(Symbol::Op(Operator::Mult));
+                }
+                '/' => {
+                    self.iter.next();
+                    return Some(Symbol::Op(Operator::Div));
+                }
+                '0'..='9' => {
+                    // In this case character will be consumed by read_integer
+                    return Some(Symbol::Integer(Self::read_integer(&mut self.iter)));
+                }
+                c if c.is_whitespace() => {
+                    // Just skip it
+                    let _ = self.iter.next();
+                }
+                _ => {
+                    // Also skip unknown char but report an error
+                    let _ = self.iter.next();
+                    eprintln!(".... {} is unknown (skipped)", c);
+                }
+            }
+        }
+
+        None
+    }
+}
