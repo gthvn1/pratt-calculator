@@ -10,6 +10,17 @@ pub enum Operator {
     Div,
 }
 
+impl Display for Operator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Operator::Add => write!(f, "+"),
+            Operator::Sub => write!(f, "-"),
+            Operator::Mult => write!(f, "*"),
+            Operator::Div => write!(f, "/"),
+        }
+    }
+}
+
 pub enum Token {
     Integer(i64),
     Op(Operator),
