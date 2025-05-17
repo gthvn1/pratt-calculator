@@ -15,6 +15,18 @@ impl fmt::Display for Expr {
     }
 }
 
+// As our parser returns an Option and we want to be able to call eval on it we
+// need to implement eval for Option<Parser>
+pub trait EvalOptionParser {
+    fn eval(self) -> Option<i64>;
+}
+
+impl EvalOptionParser for Option<Parser> {
+    fn eval(self) -> Option<i64> {
+        self.map(|p| p.eval_expr())
+    }
+}
+
 pub struct Parser {
     pub expression: Expr,
 }
@@ -31,24 +43,29 @@ impl Parser {
                 match iter.peek() {
                     None => Some(Expr::Atom(x)), // return its value
                     Some(Token::Integer(_)) => {
-                        eprintln!("ERROR: An operator is expected");
+                        eprintln!("....ERROR: An operator is expected");
                         None
                     }
                     Some(Token::Op(_)) => {
-                        eprintln!("TODO: parse op after reading an atom");
+                        eprintln!("....TODO: parse op after reading an atom");
                         None
                     }
                 }
             }
             Some(Token::Op(_)) => {
-                eprintln!("ERROR: An atom is expected first");
+                eprintln!("....ERROR: An atom is expected first");
                 None
             }
             None => {
-                eprintln!("WARNING: Nothing to parse");
+                eprintln!("....WARNING: Nothing to parse");
                 None
             }
         }
+    }
+
+    pub fn eval_expr(&self) -> i64 {
+        // TODO: real eval
+        42
     }
 }
 

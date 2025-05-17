@@ -1,4 +1,7 @@
-use pratt_calculator::interpreter::{lexer::Lexer, parser::Parser};
+use pratt_calculator::interpreter::{
+    lexer::Lexer,
+    parser::{EvalOptionParser, Parser},
+};
 use std::io::Write;
 
 fn main() {
@@ -17,15 +20,16 @@ fn main() {
             Ok(0) => break,
             Ok(n) => {
                 println!("..reading {} bytes", n);
-                println!("..lexer called");
                 let lexer = Lexer::from(input.trim());
 
-                // print tokens to check that everything is ok. We need to clone
-                // it because we still need lexer for the parser.
+                println!("..generate tokens");
                 lexer.clone().for_each(|token| println!("{}", token));
 
-                println!("..parser called");
-                let _parser = Parser::from_lexer(lexer);
+                println!("..evaluate");
+                match Parser::from_lexer(lexer).eval() {
+                    None => println!("....failed"),
+                    Some(x) => println!("....{}", x),
+                }
             }
             Err(e) => eprintln!("failed to read line: {}", e),
         }
