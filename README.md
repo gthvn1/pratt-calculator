@@ -15,6 +15,7 @@
 - [Introduction to Pratt parsing and its terminology](https://abarker.github.io/typped/pratt_parsing_intro.html)
 - [Simple Top-Down Parsing in Python](https://11l-lang.org/archive/simple-top-down-parsing/)
 - [Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
+- [YT: This Simple Algorithm Powers Real Interpreters: Pratt Parsing](https://www.youtube.com/watch?v=0c8b7YfsBKs&t=571s)
 
 ---
 ## Notes
