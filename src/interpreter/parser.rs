@@ -30,18 +30,18 @@ impl Parser {
                 // After an integer we are expecting an op or nothing
                 match iter.peek() {
                     None => Ok(Expr::Atom(x)), // return its value
-                    Some(Token::Integer(_)) => Err("operator is expected".to_string()),
+                    Some(Token::Integer(_)) => Err("....Err:operator is expected".to_string()),
                     Some(Token::Op(op)) => {
                         let lhs = Expr::Atom(x);
                         let op = *op;
-                        let _ = iter.next();
+                        iter.next(); // consume the operator
                         let rhs = Self::gen_expression(iter)?;
                         Ok(Expr::Operation(Box::new(lhs), op, Box::new(rhs)))
                     }
                 }
             }
-            Some(Token::Op(_)) => Err("an atom is expected first".to_string()),
-            None => Err("....WARNING: Nothing to parse".to_string()),
+            Some(Token::Op(_)) => Err("....Err: an atom is expected first".to_string()),
+            None => Err("....Warn: Nothing to parse".to_string()),
         }
     }
 
