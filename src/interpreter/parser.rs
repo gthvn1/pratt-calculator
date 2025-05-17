@@ -24,25 +24,25 @@ impl Parser {
         Self::gen_expression(lexer.peekable()).map(|expression| Self { expression })
     }
 
+    // 1 + 2 => Operation lhs, op, rhs
+    //     ^
+    //
     fn gen_expression(mut iter: Peekable<Lexer>) -> Result<Expr, String> {
-        match iter.next() {
-            Some(Token::Integer(x)) => {
-                // After an integer we are expecting an op or nothing
-                match iter.peek() {
-                    None => Ok(Expr::Atom(x)), // return its value
-                    Some(Token::Integer(_)) => Err("....Err:operator is expected".to_string()),
-                    Some(Token::Op(op)) => {
-                        let lhs = Expr::Atom(x);
-                        let op = *op;
-                        iter.next(); // consume the operator
-                        let rhs = Self::gen_expression(iter)?;
-                        Ok(Expr::Operation(Box::new(lhs), op, Box::new(rhs)))
-                    }
-                }
-            }
-            Some(Token::Op(_)) => Err("....Err: an atom is expected first".to_string()),
-            None => Err("....Warn: Nothing to parse".to_string()),
-        }
+        let lhs = match iter.next() {
+            Some(Token::Integer(x)) => Expr::Atom(x),
+            Some(Token::Op(_)) => return Err("....Err: an atom is expected".to_string()),
+            None => return Err("....Warn: Nothing to parse".to_string()),
+        };
+
+        let op = match iter.peek() {
+            Some(Token::Op(op)) => *op,
+            None => return Ok(lhs), // End of expression
+            _ => return Err("....Err: an operation is expected".to_string()),
+        };
+        iter.next(); // consume the operator
+
+        let rhs = Self::gen_expression(iter)?;
+        Ok(Expr::Operation(Box::new(lhs), op, Box::new(rhs)))
     }
 
     pub fn eval(&self) -> i64 {
@@ -54,10 +54,8 @@ impl Parser {
             Expr::Atom(x) => *x,
             Expr::Operation(lhs, Operator::Add, rhs) => Self::eval_expr(lhs) + Self::eval_expr(rhs),
             Expr::Operation(lhs, Operator::Sub, rhs) => Self::eval_expr(lhs) - Self::eval_expr(rhs),
-            Expr::Operation(lhs, Operator::Mult, rhs) => {
-                Self::eval_expr(lhs) * Self::eval_expr(rhs)
-            }
             Expr::Operation(lhs, Operator::Div, rhs) => Self::eval_expr(lhs) / Self::eval_expr(rhs),
+            Expr::Operation(lhs, Operator::Mul, rhs) => Self::eval_expr(lhs) * Self::eval_expr(rhs),
         }
     }
 }
@@ -92,7 +90,7 @@ mod tests {
         // Start by creating 2 * 3
         let lhs = Box::new(Expr::Atom(2));
         let rhs = Box::new(Expr::Atom(3));
-        let e = Expr::Operation(lhs, Operator::Mult, rhs);
+        let e = Expr::Operation(lhs, Operator::Mul, rhs);
 
         // And now create 1 + e
         let lhs = Box::new(Expr::Atom(1));

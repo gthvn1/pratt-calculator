@@ -8,7 +8,7 @@ use std::fmt::Display;
 pub enum Operator {
     Add,
     Sub,
-    Mult,
+    Mul,
     Div,
 }
 
@@ -17,7 +17,7 @@ impl Display for Operator {
         match self {
             Operator::Add => write!(f, "+"),
             Operator::Sub => write!(f, "-"),
-            Operator::Mult => write!(f, "*"),
+            Operator::Mul => write!(f, "*"),
             Operator::Div => write!(f, "/"),
         }
     }
@@ -34,7 +34,7 @@ impl Display for Token {
             Token::Integer(i) => write!(f, "....S: Integer: {}", i),
             Token::Op(Operator::Add) => write!(f, "....S: Op: +"),
             Token::Op(Operator::Sub) => write!(f, "....S: Op: -"),
-            Token::Op(Operator::Mult) => write!(f, "....S: Op: *"),
+            Token::Op(Operator::Mul) => write!(f, "....S: Op: *"),
             Token::Op(Operator::Div) => write!(f, "....S: Op: /"),
         }
     }
@@ -89,7 +89,7 @@ impl Iterator for Lexer<'_> {
                 }
                 '*' => {
                     self.iter.next();
-                    return Some(Token::Op(Operator::Mult));
+                    return Some(Token::Op(Operator::Mul));
                 }
                 '/' => {
                     self.iter.next();
