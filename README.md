@@ -1,8 +1,9 @@
 # Pratt Calculator
 
 To understand pratt parsing (Vaughan Pratt, 1973) we create a simple calculator.
-- https://dl.acm.org/doi/10.1145/512927.512931
-- https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
+- [Top down operator precedence](https://dl.acm.org/doi/10.1145/512927.512931)
+- [Simple Top-Down Parsing in Python](https://11l-lang.org/archive/simple-top-down-parsing/)
+- [Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
 
 ---
 
