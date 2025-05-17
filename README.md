@@ -2,7 +2,13 @@
 
 - To understand pratt parsing (Vaughan Pratt, 1973) we create a simple calculator.
 - To start the repl: `cargo run`
-- Status: Tokenize and parse only one atom... 
+
+## Status
+
+- [x] Tokenizer
+- [x] parse an atom
+- [ ] parse one expression
+- [ ] parse a "complex" expression with priorities
 
 ## Links
 - [Top down operator precedence](https://dl.acm.org/doi/10.1145/512927.512931)
@@ -11,6 +17,7 @@
 - [Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
 
 ---
+## Notes
 
 ### 🛠 High-level Steps to implement parser and evaluator using Pratt parsing
 
