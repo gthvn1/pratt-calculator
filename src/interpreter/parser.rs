@@ -15,57 +15,50 @@ impl fmt::Display for Expr {
     }
 }
 
-// As our parser returns an Option and we want to be able to call eval on it we
-// need to implement eval for Option<Parser>.
-pub trait EvalOptionParser {
-    fn eval(self) -> Option<i64>;
-}
-
-impl EvalOptionParser for Option<Parser> {
-    fn eval(self) -> Option<i64> {
-        self.map(|p| p.eval_expr())
-    }
-}
-
 pub struct Parser {
     pub expression: Expr,
 }
 
 impl Parser {
-    pub fn from_lexer(lexer: Lexer) -> Option<Self> {
+    pub fn from_lexer(lexer: Lexer) -> Result<Self, String> {
         Self::gen_expression(lexer.peekable()).map(|expression| Self { expression })
     }
 
-    fn gen_expression(mut iter: Peekable<Lexer>) -> Option<Expr> {
+    fn gen_expression(mut iter: Peekable<Lexer>) -> Result<Expr, String> {
         match iter.next() {
             Some(Token::Integer(x)) => {
                 // After an integer we are expecting an op or nothing
                 match iter.peek() {
-                    None => Some(Expr::Atom(x)), // return its value
-                    Some(Token::Integer(_)) => {
-                        eprintln!("....ERROR: An operator is expected");
-                        None
-                    }
-                    Some(Token::Op(_)) => {
-                        eprintln!("....TODO: parse op after reading an atom");
-                        None
+                    None => Ok(Expr::Atom(x)), // return its value
+                    Some(Token::Integer(_)) => Err("operator is expected".to_string()),
+                    Some(Token::Op(op)) => {
+                        let lhs = Expr::Atom(x);
+                        let op = *op;
+                        let _ = iter.next();
+                        let rhs = Self::gen_expression(iter)?;
+                        Ok(Expr::Operation(Box::new(lhs), op, Box::new(rhs)))
                     }
                 }
             }
-            Some(Token::Op(_)) => {
-                eprintln!("....ERROR: An atom is expected first");
-                None
-            }
-            None => {
-                eprintln!("....WARNING: Nothing to parse");
-                None
-            }
+            Some(Token::Op(_)) => Err("an atom is expected first".to_string()),
+            None => Err("....WARNING: Nothing to parse".to_string()),
         }
     }
 
-    pub fn eval_expr(&self) -> i64 {
-        // TODO: real eval
-        42
+    pub fn eval(&self) -> i64 {
+        Self::eval_expr(&self.expression)
+    }
+
+    fn eval_expr(e: &Expr) -> i64 {
+        match e {
+            Expr::Atom(x) => *x,
+            Expr::Operation(lhs, Operator::Add, rhs) => Self::eval_expr(lhs) + Self::eval_expr(rhs),
+            Expr::Operation(lhs, Operator::Sub, rhs) => Self::eval_expr(lhs) - Self::eval_expr(rhs),
+            Expr::Operation(lhs, Operator::Mult, rhs) => {
+                Self::eval_expr(lhs) * Self::eval_expr(rhs)
+            }
+            Expr::Operation(lhs, Operator::Div, rhs) => Self::eval_expr(lhs) / Self::eval_expr(rhs),
+        }
     }
 }
 

@@ -1,7 +1,4 @@
-use pratt_calculator::interpreter::{
-    lexer::Lexer,
-    parser::{EvalOptionParser, Parser},
-};
+use pratt_calculator::interpreter::{lexer::Lexer, parser::Parser};
 use std::io::Write;
 
 fn main() {
@@ -26,10 +23,17 @@ fn main() {
                 lexer.clone().for_each(|token| println!("{}", token));
 
                 println!("..evaluate");
-                match Parser::from_lexer(lexer).eval() {
-                    None => println!("....failed"),
-                    Some(x) => println!("....{}", x),
-                }
+                let parser = match Parser::from_lexer(lexer) {
+                    Ok(p) => p,
+                    Err(s) => {
+                        eprintln!("{}", s);
+                        continue;
+                    }
+                };
+
+                println!("{}", parser);
+                let res = parser.eval();
+                println!("..result: {}", res);
             }
             Err(e) => eprintln!("failed to read line: {}", e),
         }

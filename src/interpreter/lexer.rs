@@ -4,6 +4,7 @@
 use std::convert::From;
 use std::fmt::Display;
 
+#[derive(Copy, Clone)]
 pub enum Operator {
     Add,
     Sub,

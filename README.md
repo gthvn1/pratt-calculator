@@ -7,7 +7,8 @@
 
 - [x] Tokenizer
 - [x] parse an atom
-- [ ] parse one expression
+- [x] parse one expression without priorities
+- [x] evaluate expression
 - [ ] parse a "complex" expression with priorities
 
 ## Links
