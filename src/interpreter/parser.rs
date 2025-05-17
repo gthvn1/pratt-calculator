@@ -120,7 +120,21 @@ mod tests {
     #[test]
     fn parse_simple_add() {
         let l = Lexer::from("1 + 2");
-        let _p = Parser::from_lexer(l);
-        //assert_eq!("(+ 1 2)", p.to_string())
+        let p = Parser::from_lexer(l).unwrap();
+        assert_eq!("(+ 1 2)", p.to_string())
     }
+
+    #[test]
+    fn parse_expression() {
+        let l = Lexer::from("1 + 2 * 3");
+        let p = Parser::from_lexer(l).unwrap();
+        assert_eq!("(+ 1 (* 2 3))", p.to_string())
+    }
+
+    // #[test]
+    // fn parse_expression_with_prio() {
+    //     let l = Lexer::from("1 * 2 + 3");
+    //     let p = Parser::from_lexer(l).unwrap();
+    //     assert_eq!("(+ (* 1 2) 3)", p.to_string())
+    // }
 }
