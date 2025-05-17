@@ -1,6 +1,7 @@
 // We start with a simple calculator:
 // It accepts integer and four operators '+', '-', '/' and '*'
 
+use std::convert::From;
 use std::fmt::Display;
 
 pub enum Operator {
@@ -38,17 +39,12 @@ impl Display for Token {
     }
 }
 
+#[derive(Clone)]
 pub struct Lexer<'a> {
     iter: std::iter::Peekable<std::str::Chars<'a>>,
 }
 
-impl<'a> Lexer<'a> {
-    pub fn new(input: &'a str) -> Self {
-        Self {
-            iter: input.chars().peekable(),
-        }
-    }
-
+impl Lexer<'_> {
     fn read_integer(iter: &mut std::iter::Peekable<std::str::Chars<'_>>) -> i64 {
         let mut v = String::new();
 
@@ -62,6 +58,14 @@ impl<'a> Lexer<'a> {
         }
 
         v.parse::<i64>().unwrap()
+    }
+}
+
+impl<'a> From<&'a str> for Lexer<'a> {
+    fn from(input: &'a str) -> Self {
+        Self {
+            iter: input.chars().peekable(),
+        }
     }
 }
 
