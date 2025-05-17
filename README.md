@@ -1,6 +1,7 @@
 # Pratt Calculator
 
-To understand pratt parsing we create a simple calculator.
+To understand pratt parsing (Vaughan Pratt, 1973) we create a simple calculator.
+- https://dl.acm.org/doi/10.1145/512927.512931
 - https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
 
 ---
