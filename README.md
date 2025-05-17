@@ -1,7 +1,12 @@
 # Pratt Calculator
 
-To understand pratt parsing (Vaughan Pratt, 1973) we create a simple calculator.
+- To understand pratt parsing (Vaughan Pratt, 1973) we create a simple calculator.
+- To start the repl: `cargo run`
+- Status: Tokenize and parse only one atom... 
+
+## Links
 - [Top down operator precedence](https://dl.acm.org/doi/10.1145/512927.512931)
+- [Introduction to Pratt parsing and its terminology](https://abarker.github.io/typped/pratt_parsing_intro.html)
 - [Simple Top-Down Parsing in Python](https://11l-lang.org/archive/simple-top-down-parsing/)
 - [Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
 
