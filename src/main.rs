@@ -19,10 +19,10 @@ fn main() {
         match stdin.read_line(&mut input) {
             Ok(0) => break,
             Ok(n) => {
-                println!("..reading {} bytes", n);
-                let lexer = Lexer::from(input.trim());
+                println!("..read {} bytes", n);
 
                 println!("..generate tokens");
+                let lexer = Lexer::from(input.trim());
                 lexer.clone().for_each(|token| println!("{}", token));
 
                 println!("..evaluate");

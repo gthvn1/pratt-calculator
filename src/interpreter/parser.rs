@@ -16,7 +16,7 @@ impl fmt::Display for Expr {
 }
 
 // As our parser returns an Option and we want to be able to call eval on it we
-// need to implement eval for Option<Parser>
+// need to implement eval for Option<Parser>.
 pub trait EvalOptionParser {
     fn eval(self) -> Option<i64>;
 }
