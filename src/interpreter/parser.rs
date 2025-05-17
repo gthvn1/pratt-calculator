@@ -21,28 +21,46 @@ pub struct Parser {
 
 impl Parser {
     pub fn from_lexer(lexer: Lexer) -> Result<Self, String> {
-        Self::gen_expression(lexer.peekable()).map(|expression| Self { expression })
+        Self::gen_expression(&mut lexer.peekable(), 0).map(|expression| Self { expression })
     }
 
-    // 1 + 2 => Operation lhs, op, rhs
-    //     ^
+    //  1    *   2 + 3
+    // LHS
+    //      OP
+    //           ^   -> gen_expression 2 + 3
+    //             ^ + : if + has higher precedence we continue and LHS = 1
+    //                   if not then LHS == (1 * 2)
     //
-    fn gen_expression(mut iter: Peekable<Lexer>) -> Result<Expr, String> {
-        let lhs = match iter.next() {
+    fn gen_expression(iter: &mut Peekable<Lexer>, precedence: u8) -> Result<Expr, String> {
+        let mut lhs = match iter.next() {
             Some(Token::Integer(x)) => Expr::Atom(x),
             Some(Token::Op(_)) => return Err("....Err: an atom is expected".to_string()),
             None => return Err("....Warn: Nothing to parse".to_string()),
         };
 
-        let op = match iter.peek() {
-            Some(Token::Op(op)) => *op,
-            None => return Ok(lhs), // End of expression
-            _ => return Err("....Err: an operation is expected".to_string()),
-        };
-        iter.next(); // consume the operator
+        loop {
+            let op = match iter.peek() {
+                Some(Token::Op(op)) => *op,
+                None => return Ok(lhs), // End of expression
+                _ => return Err("....Err: an operation is expected".to_string()),
+            };
 
-        let rhs = Self::gen_expression(iter)?;
-        Ok(Expr::Operation(Box::new(lhs), op, Box::new(rhs)))
+            let op_precedence = op.precedence();
+            if op_precedence < precedence {
+                // We can return lhs because the current precedence is lower than
+                // the previously found.
+                break;
+            }
+
+            // If the precedence is higher we just need to continue the iteration
+            iter.next(); // consume the operator
+            // We add one to the precedence in case of equaltiy. It allows to always
+            // choose the same side and be deterministic.
+            let rhs = Self::gen_expression(iter, op_precedence + 1)?;
+            lhs = Expr::Operation(Box::new(lhs), op, Box::new(rhs));
+        }
+
+        Ok(lhs)
     }
 
     pub fn eval(&self) -> i64 {

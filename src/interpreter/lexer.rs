@@ -12,6 +12,15 @@ pub enum Operator {
     Div,
 }
 
+impl Operator {
+    pub fn precedence(&self) -> u8 {
+        match self {
+            Operator::Add | Operator::Sub => 5,
+            Operator::Mul | Operator::Div => 10,
+        }
+    }
+}
+
 impl Display for Operator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
