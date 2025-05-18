@@ -2,7 +2,7 @@ use super::lexer::{Lexer, Operator, Token};
 use std::{fmt, iter::Peekable};
 
 pub enum Expr {
-    Atom(i64),
+    Atom(f64),
     Operation(Box<Expr>, Operator, Box<Expr>),
 }
 
@@ -33,7 +33,7 @@ impl Parser {
     //
     fn gen_expression(iter: &mut Peekable<Lexer>, precedence: u8) -> Result<Expr, String> {
         let mut lhs = match iter.next() {
-            Some(Token::Integer(x)) => Expr::Atom(x),
+            Some(Token::Number(x)) => Expr::Atom(x),
             Some(Token::Op(_)) => return Err("....Err: an atom is expected".to_string()),
             None => return Err("....Warn: Nothing to parse".to_string()),
         };
@@ -63,11 +63,11 @@ impl Parser {
         Ok(lhs)
     }
 
-    pub fn eval(&self) -> i64 {
+    pub fn eval(&self) -> f64 {
         Self::eval_expr(&self.expression)
     }
 
-    fn eval_expr(e: &Expr) -> i64 {
+    fn eval_expr(e: &Expr) -> f64 {
         match e {
             Expr::Atom(x) => *x,
             Expr::Operation(lhs, Operator::Add, rhs) => Self::eval_expr(lhs) + Self::eval_expr(rhs),
@@ -94,8 +94,8 @@ mod tests {
     fn print_simple_expr() {
         // 1 + 2
         // Start by creating 2 * 3
-        let lhs = Box::new(Expr::Atom(1));
-        let rhs = Box::new(Expr::Atom(2));
+        let lhs = Box::new(Expr::Atom(1.0));
+        let rhs = Box::new(Expr::Atom(2.0));
         let e = Expr::Operation(lhs, Operator::Add, rhs);
 
         // We are expecting to print 1 + 2 * 3 as (+ 1 (* 2 3))
@@ -106,12 +106,12 @@ mod tests {
     fn print_expr() {
         // 1 + 2 * 3
         // Start by creating 2 * 3
-        let lhs = Box::new(Expr::Atom(2));
-        let rhs = Box::new(Expr::Atom(3));
+        let lhs = Box::new(Expr::Atom(2.0));
+        let rhs = Box::new(Expr::Atom(3.0));
         let e = Expr::Operation(lhs, Operator::Mul, rhs);
 
         // And now create 1 + e
-        let lhs = Box::new(Expr::Atom(1));
+        let lhs = Box::new(Expr::Atom(1.0));
         let rhs = Box::new(e);
         let e = Expr::Operation(lhs, Operator::Add, rhs);
 

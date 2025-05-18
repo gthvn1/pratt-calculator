@@ -33,14 +33,14 @@ impl Display for Operator {
 }
 
 pub enum Token {
-    Integer(i64),
+    Number(f64),
     Op(Operator),
 }
 
 impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Token::Integer(i) => write!(f, "....S: Integer: {}", i),
+            Token::Number(i) => write!(f, "....S: Number: {}", i),
             Token::Op(Operator::Add) => write!(f, "....S: Op: +"),
             Token::Op(Operator::Sub) => write!(f, "....S: Op: -"),
             Token::Op(Operator::Mul) => write!(f, "....S: Op: *"),
@@ -55,7 +55,7 @@ pub struct Lexer<'a> {
 }
 
 impl Lexer<'_> {
-    fn read_integer(iter: &mut std::iter::Peekable<std::str::Chars<'_>>) -> i64 {
+    fn read_number(iter: &mut std::iter::Peekable<std::str::Chars<'_>>) -> f64 {
         let mut v = String::new();
 
         while let Some(&c) = iter.peek() {
@@ -67,7 +67,7 @@ impl Lexer<'_> {
             }
         }
 
-        v.parse::<i64>().unwrap()
+        v.parse::<f64>().unwrap()
     }
 }
 
@@ -105,8 +105,8 @@ impl Iterator for Lexer<'_> {
                     return Some(Token::Op(Operator::Div));
                 }
                 '0'..='9' => {
-                    // In this case character will be consumed by read_integer
-                    return Some(Token::Integer(Self::read_integer(&mut self.iter)));
+                    // In this case character will be consumed by read_number
+                    return Some(Token::Number(Self::read_number(&mut self.iter)));
                 }
                 c if c.is_whitespace() => {
                     // Just skip it
