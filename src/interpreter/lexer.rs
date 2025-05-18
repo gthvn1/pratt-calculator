@@ -4,7 +4,7 @@
 use std::convert::From;
 use std::fmt::Display;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum Operator {
     Add,
     Sub,
@@ -32,19 +32,24 @@ impl Display for Operator {
     }
 }
 
+#[derive(PartialEq)]
 pub enum Token {
     Number(f64),
     Op(Operator),
+    LeftParen,
+    RightParen,
 }
 
 impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Token::Number(i) => write!(f, "....S: Number: {}", i),
-            Token::Op(Operator::Add) => write!(f, "....S: Op: +"),
-            Token::Op(Operator::Sub) => write!(f, "....S: Op: -"),
-            Token::Op(Operator::Mul) => write!(f, "....S: Op: *"),
-            Token::Op(Operator::Div) => write!(f, "....S: Op: /"),
+            Token::Number(i) => write!(f, "....T: Number: {}", i),
+            Token::Op(Operator::Add) => write!(f, "....T: Op: +"),
+            Token::Op(Operator::Sub) => write!(f, "....T: Op: -"),
+            Token::Op(Operator::Mul) => write!(f, "....T: Op: *"),
+            Token::Op(Operator::Div) => write!(f, "....T: Op: /"),
+            Token::LeftParen => write!(f, "....T: LeftParen"),
+            Token::RightParen => write!(f, "....T: RightParen"),
         }
     }
 }
@@ -120,6 +125,14 @@ impl Iterator for Lexer<'_> {
                 '0'..='9' => {
                     // In this case character will be consumed by read_number
                     return Some(Token::Number(Self::read_number(&mut self.iter)));
+                }
+                '(' => {
+                    self.iter.next();
+                    return Some(Token::LeftParen);
+                }
+                ')' => {
+                    self.iter.next();
+                    return Some(Token::RightParen);
                 }
                 c if c.is_whitespace() => {
                     // Just skip it

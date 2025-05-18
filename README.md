@@ -13,13 +13,13 @@
 ## Status
 
 - [x] Tokenizer
-  - We accept `integer`, `+`, `-`, `/` and `*`.
+  - We accept `float`, `+`, `-`, `/` and `*`.
 - [x] parse an atom
 - [x] parse one expression without priorities
 - [x] evaluate expression
 - [x] parse a "complex" expression with priorities
-- [ ] accept f64
-- [ ] allow parenthesis
+- [x] accept f64
+- [x] allow parenthesis
 
 ```bash
 Start of the REPL... Ctrl+D to quit

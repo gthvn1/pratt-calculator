@@ -24,7 +24,7 @@ impl Parser {
         Self::gen_expression(&mut lexer.peekable(), 0).map(|expression| Self { expression })
     }
 
-    //  1    *   2 + 3
+    //  1    *   ( 2 + 3)
     // LHS
     //      OP
     //           ^   -> gen_expression 2 + 3
@@ -35,12 +35,27 @@ impl Parser {
         let mut lhs = match iter.next() {
             Some(Token::Number(x)) => Expr::Atom(x),
             Some(Token::Op(_)) => return Err("....Err: an atom is expected".to_string()),
+            Some(Token::LeftParen) => {
+                let lhs = Self::gen_expression(iter, 0);
+                // If we returned from gen_expression we should have a RightParen
+                let t = iter
+                    .next()
+                    .ok_or("....Err: right parenthesis expected,found nothing".to_string())?;
+                if t != Token::RightParen {
+                    return Err("...Err: Right parenthesis is expected".to_string());
+                }
+                lhs?
+            }
+            Some(Token::RightParen) => {
+                return Err("....Err: right parenthesis not expected".to_string())
+            }
             None => return Err("....Warn: Nothing to parse".to_string()),
         };
 
         loop {
             let op = match iter.peek() {
                 Some(Token::Op(op)) => *op,
+                Some(Token::RightParen) => break,
                 None => return Ok(lhs), // End of expression
                 _ => return Err("....Err: an operation is expected".to_string()),
             };
@@ -166,5 +181,12 @@ mod tests {
         let l = Lexer::from("1 + 2 * 3");
         let p = Parser::from_lexer(l).unwrap();
         assert_eq!(7.0, p.eval())
+    }
+
+    #[test]
+    fn eval_expression_paren1() {
+        let l = Lexer::from("(1 + 2) * 3");
+        let p = Parser::from_lexer(l).unwrap();
+        assert_eq!(9.0, p.eval())
     }
 }
