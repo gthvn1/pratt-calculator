@@ -107,7 +107,7 @@ mod tests {
         // 1 + 2 * 3
         // Start by creating 2 * 3
         let lhs = Box::new(Expr::Atom(2.0));
-        let rhs = Box::new(Expr::Atom(3.0));
+        let rhs = Box::new(Expr::Atom(3.14));
         let e = Expr::Operation(lhs, Operator::Mul, rhs);
 
         // And now create 1 + e
@@ -116,7 +116,7 @@ mod tests {
         let e = Expr::Operation(lhs, Operator::Add, rhs);
 
         // We are expecting to print 1 + 2 * 3 as (+ 1 (* 2 3))
-        assert_eq!("(+ 1 (* 2 3))", e.to_string());
+        assert_eq!("(+ 1 (* 2 3.14))", e.to_string());
     }
 
     #[test]
@@ -149,22 +149,22 @@ mod tests {
 
     #[test]
     fn parse_expression_with_prio() {
-        let l = Lexer::from("1 * 2 + 3");
+        let l = Lexer::from("1.0 * 2.1 + 3");
         let p = Parser::from_lexer(l).unwrap();
-        assert_eq!("(+ (* 1 2) 3)", p.to_string())
+        assert_eq!("(+ (* 1 2.1) 3)", p.to_string())
     }
 
     #[test]
     fn eval_expression1() {
         let l = Lexer::from("1 * 2 + 3");
         let p = Parser::from_lexer(l).unwrap();
-        assert_eq!(5, p.eval())
+        assert_eq!(5.0, p.eval())
     }
 
     #[test]
     fn eval_expression2() {
         let l = Lexer::from("1 + 2 * 3");
         let p = Parser::from_lexer(l).unwrap();
-        assert_eq!(7, p.eval())
+        assert_eq!(7.0, p.eval())
     }
 }

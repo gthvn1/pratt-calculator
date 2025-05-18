@@ -55,15 +55,28 @@ pub struct Lexer<'a> {
 }
 
 impl Lexer<'_> {
+    fn read_digits(iter: &mut std::iter::Peekable<std::str::Chars<'_>>, buffer: &mut String) {
+        while let Some(&c) = iter.peek() {
+            if c.is_ascii_digit() {
+                buffer.push(iter.next().unwrap());
+            } else {
+                break;
+            }
+        }
+    }
+
     fn read_number(iter: &mut std::iter::Peekable<std::str::Chars<'_>>) -> f64 {
         let mut v = String::new();
 
-        while let Some(&c) = iter.peek() {
-            if c.is_ascii_digit() {
-                let x = iter.next().unwrap();
-                v.push(x);
-            } else {
-                break;
+        // Read real part
+        Self::read_digits(iter, &mut v);
+
+        // Check if there is a fraction
+        if let Some(&c) = iter.peek() {
+            if c == '.' {
+                iter.next();
+                v.push('.');
+                Self::read_digits(iter, &mut v);
             }
         }
 
