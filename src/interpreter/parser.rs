@@ -51,11 +51,11 @@ impl Parser {
                 // the previously found.
                 break;
             }
-
-            // If the precedence is higher we just need to continue the iteration
+            // Else if the precedence is higher we just need to continue the iteration
             iter.next(); // consume the operator
-            // We add one to the precedence in case of equaltiy. It allows to always
-            // choose the same side and be deterministic.
+
+            // We add one to the precedence in case of equality. It allows
+            // to always choose the same side and be deterministic.
             let rhs = Self::gen_expression(iter, op_precedence + 1)?;
             lhs = Expr::Operation(Box::new(lhs), op, Box::new(rhs));
         }
@@ -147,10 +147,24 @@ mod tests {
         assert_eq!("(+ 1 (* 2 3))", p.to_string())
     }
 
-    // #[test]
-    // fn parse_expression_with_prio() {
-    //     let l = Lexer::from("1 * 2 + 3");
-    //     let p = Parser::from_lexer(l).unwrap();
-    //     assert_eq!("(+ (* 1 2) 3)", p.to_string())
-    // }
+    #[test]
+    fn parse_expression_with_prio() {
+        let l = Lexer::from("1 * 2 + 3");
+        let p = Parser::from_lexer(l).unwrap();
+        assert_eq!("(+ (* 1 2) 3)", p.to_string())
+    }
+
+    #[test]
+    fn eval_expression1() {
+        let l = Lexer::from("1 * 2 + 3");
+        let p = Parser::from_lexer(l).unwrap();
+        assert_eq!(5, p.eval())
+    }
+
+    #[test]
+    fn eval_expression2() {
+        let l = Lexer::from("1 + 2 * 3");
+        let p = Parser::from_lexer(l).unwrap();
+        assert_eq!(7, p.eval())
+    }
 }
