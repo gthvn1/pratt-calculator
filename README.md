@@ -13,7 +13,7 @@
 ## Status
 
 - [x] Tokenizer
-  - We accept `float`, `+`, `-`, `/` and `*`.
+  - We accept `float`, `+`, `-`, `/`, `*` and parenthesis.
 - [x] parse an atom
 - [x] parse one expression without priorities
 - [x] evaluate expression
@@ -23,27 +23,38 @@
 
 ```bash
 Start of the REPL... Ctrl+D to quit
->> 2 + 3 * 4
+>> 1 + 2 * 3
 ..read 10 bytes
 ..generate tokens
-....S: Integer: 2
-....S: Op: +
-....S: Integer: 3
-....S: Op: *
-....S: Integer: 4
+....T: Number: 1
+....T: Op: +
+....T: Number: 2
+....T: Op: *
+....T: Number: 3
 ..evaluate
-(+ 2 (* 3 4))
-..result: 14
->> 2 * 3 + 4
-..read 10 bytes
+(+ 1 (* 2 3))
+..result: 7
+>> (1 + 2) * 3
+..read 12 bytes
 ..generate tokens
-....S: Integer: 2
-....S: Op: *
-....S: Integer: 3
-....S: Op: +
-....S: Integer: 4
+....T: LeftParen
+....T: Number: 1
+....T: Op: +
+....T: Number: 2
+....T: RightParen
+....T: Op: *
+....T: Number: 3
 ..evaluate
-(+ (* 2 3) 4)
-..result: 10
+(* (+ 1 2) 3)
+..result: 9
+>> 1/2
+..read 4 bytes
+..generate tokens
+....T: Number: 1
+....T: Op: /
+....T: Number: 2
+..evaluate
+(/ 1 2)
+..result: 0.5
 >>
 ```
