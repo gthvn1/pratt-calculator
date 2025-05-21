@@ -2,13 +2,24 @@
 
 - To understand pratt parsing (Vaughan Pratt, 1973) we create a simple calculator.
 - To start the repl: `cargo run`
+- To go a little bit further we can extend our simple calculator to:
+  - support let statement to bind a character to a value
+  - generate bytecode because we have an AST
+- For the bytecode I'd like to have a look to the [BEAM](https://blog.stenmans.org/theBeamBook/#P-ERTS) :)
+- And what about running it on Xen...
 
 ## Links
+
 - [Top down operator precedence](https://dl.acm.org/doi/10.1145/512927.512931)
 - [Introduction to Pratt parsing and its terminology](https://abarker.github.io/typped/pratt_parsing_intro.html)
 - [Simple Top-Down Parsing in Python](https://11l-lang.org/archive/simple-top-down-parsing/)
 - [Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
 - [YT: This Simple Algorithm Powers Real Interpreters: Pratt Parsing](https://www.youtube.com/watch?v=0c8b7YfsBKs&t=571s)
+
+- [BEAM](https://blog.stenmans.org/theBeamBook/#P-ERTS)
+- [Getting started with Erlang](https://erlang.org/documentation/doc-5.3/doc/getting_started/getting_started.html)
+- [Erlang on Xen](https://erlangonxen.org/)
+- [AtomVM](https://www.atomvm.net/)
 
 ## Status
 
